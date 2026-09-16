@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: dim_municipality
+    description: >
+      Distinct municipalities (IBGE 6-digit code) referenced as either the patient's
+      residence or the hospital's location in fact_hospitalizations.
+    columns:
+      - name: municipality_code
+        description: IBGE 6-digit municipality code.
+        tests:
+          - unique
+          - not_null
+      - name: state_code
+        description: First two digits of the municipality code, identifying the state (UF).

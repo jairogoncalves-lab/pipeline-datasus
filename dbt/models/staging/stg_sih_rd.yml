@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: stg_sih_rd
+    description: >
+      Raw read of the SIH-SUS "RD" (reduced AIH) bronze Parquet files from S3.
+      One row per hospital admission (AIH) as originally reported by DataSUS,
+      with columns renamed to snake_case but no cleaning, typing, or deduplication applied.
+    columns:
+      - name: uf
+        description: Two-letter state code, taken from the S3 partition path (`uf=<code>`).
+      - name: year
+        description: Competência (reporting period) year, taken from the S3 partition path.
+      - name: month
+        description: Competência (reporting period) month, taken from the S3 partition path.
+      - name: admission_id
+        description: Raw AIH (Authorization for Hospital Admission) number. Source field `N_AIH`.
+      - name: management_uf_code
+        description: Code of the health authority (state/municipal) that manages this AIH. Source field `UF_ZI`.
+      - name: patient_municipality_code
+        description: IBGE 6-digit code of the patient's municipality of residence. Source field `MUNIC_RES`.
+      - name: hospital_municipality_code
+        description: IBGE 6-digit code of the municipality where the hospital is located. Source field `MUNIC_MOV`.
+      - name: hospital_cnes_code
+        description: CNES code (National Registry of Health Establishments) identifying the hospital. Source field `CNES`.
+      - name: birth_date_raw
+        description: Patient's birth date as a raw `YYYYMMDD` string. Source field `NASC`.
+      - name: sex_code
+        description: "Raw patient sex code: 1 = male, 3 = female. Source field `SEXO`."
+      - name: age_raw
+        description: Patient's age at admission, as a raw string. Source field `IDADE`.
+      - name: admission_date_raw
+        description: Admission date as a raw `YYYYMMDD` string. Source field `DT_INTER`.
+      - name: discharge_date_raw
+        description: Discharge date as a raw `YYYYMMDD` string. Source field `DT_SAIDA`.
+      - name: length_of_stay_raw
+        description: Number of days admitted, as a raw string. Source field `DIAS_PERM`.
+      - name: primary_diagnosis_code
+        description: Primary diagnosis, as an ICD-10 (CID-10) code. Source field `DIAG_PRINC`.
+      - name: secondary_diagnosis_code
+        description: Secondary diagnosis, as an ICD-10 (CID-10) code (`0000` when not reported). Source field `DIAG_SECUN`.
+      - name: bed_specialty_code
+        description: Code for the hospital bed/ward specialty used for the admission. Source field `ESPEC`.
+      - name: death_code
+        description: "Raw in-hospital death indicator: '0' = survived, '1' = died. Source field `MORTE`."
+      - name: race_color_code
+        description: Patient's self-declared race/color code, per IBGE classification. Source field `RACA_COR`.
+      - name: total_cost_raw
+        description: Total approved cost of the admission (BRL), as a raw decimal string. Source field `VAL_TOT`.
+      - name: icu_cost_raw
+        description: Portion of the total cost attributable to ICU care (BRL), as a raw decimal string. Source field `VAL_UTI`.

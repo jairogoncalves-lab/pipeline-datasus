@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: silver_hospitalizations
+    description: >
+      One row per hospital admission (AIH), deduplicated (keeping the latest reported
+      competência per admission_id), typed, and cleaned from the SIH-SUS bronze layer.
+      This is the canonical hospitalization record used to build the gold layer.
+    columns:
+      - name: admission_id
+        description: Unique hospital admission identifier (AIH number).
+        tests:
+          - unique
+          - not_null
+      - name: uf
+        description: Two-letter state code of the reporting competência.
+      - name: year
+        description: Competência (reporting period) year.
+      - name: month
+        description: Competência (reporting period) month.
+      - name: patient_municipality_code
+        description: IBGE 6-digit code of the patient's municipality of residence.
+      - name: hospital_municipality_code
+        description: IBGE 6-digit code of the municipality where the hospital is located.
+      - name: hospital_cnes_code
+        description: CNES code identifying the hospital where the admission took place.
+      - name: birth_date
+        description: Patient's date of birth.
+      - name: sex
+        description: Patient sex (M, F, or U for unknown).
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["M", "F", "U"]
+      - name: age
+        description: Patient's age at admission, in years.
+      - name: admission_date
+        description: Date the patient was admitted.
+        tests:
+          - not_null
+      - name: discharge_date
+        description: Date the patient was discharged.
+      - name: length_of_stay_days
+        description: Number of days the patient stayed admitted.
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+      - name: primary_diagnosis_code
+        description: Primary diagnosis for the admission, as an ICD-10 (CID-10) code.
+      - name: secondary_diagnosis_code
+        description: Secondary diagnosis, as an ICD-10 (CID-10) code (null when not reported).
+      - name: bed_specialty_code
+        description: Code for the hospital bed/ward specialty used for the admission.
+      - name: died
+        description: True if the patient died during this admission.
+      - name: race_color_code
+        description: Patient's self-declared race/color code, per IBGE classification.
+      - name: total_cost
+        description: Total approved cost of the admission, in BRL.
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+      - name: icu_cost
+        description: Portion of the total cost attributable to ICU care, in BRL.
