@@ -41,8 +41,8 @@ Gold    →  dimensional modeling            s3://.../gold/
 - [x] AWS setup (S3 + IAM)
 - [x] Ingestion script (PySUS + boto3)
 - [ ] Orchestration DAG (Airflow / Astro CLI)
-- [ ] Databricks setup + dbt project
-- [ ] dbt models (Silver / Gold) + tests
+- [x] dbt models (Silver / Gold) + tests (prototyped on DuckDB, see [`dbt/README.md`](dbt/README.md))
+- [ ] Databricks setup + migrate dbt to dbt-databricks
 - [ ] Airflow + dbt integration (Astronomer Cosmos)
 - [ ] CI/CD + static dbt documentation
 

@@ -1,0 +1,7 @@
+pipeline_datasus:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: 'local.duckdb'
+      threads: 4

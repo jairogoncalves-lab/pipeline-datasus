@@ -1,0 +1,28 @@
+name: 'pipeline_datasus'
+version: '1.0.0'
+config-version: 2
+
+profile: 'pipeline_datasus'
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+on-run-start:
+  - "INSTALL httpfs; LOAD httpfs;"
+  - "INSTALL aws; LOAD aws;"
+  - "CALL load_aws_credentials();"
+
+models:
+  pipeline_datasus:
+    staging:
+      +materialized: view
+    silver:
+      +materialized: table
+    gold:
+      +materialized: table
+
+vars:
+  bronze_bucket: pipeline-datasus-jairo

@@ -1,5 +1,14 @@
 .venv/
+.venv-dbt/
 __pycache__/
 *.pyc
 .env
 data/
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/local.duckdb
+dbt/local.duckdb.wal
+dbt/.user.yml

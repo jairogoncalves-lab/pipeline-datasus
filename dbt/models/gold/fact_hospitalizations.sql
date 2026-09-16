@@ -1,0 +1,18 @@
+select
+    admission_id,
+    cast(strftime(admission_date, '%Y%m%d') as integer) as admission_date_key,
+    cast(strftime(discharge_date, '%Y%m%d') as integer) as discharge_date_key,
+    patient_municipality_code,
+    hospital_municipality_code,
+    hospital_cnes_code,
+    sex,
+    age,
+    primary_diagnosis_code,
+    secondary_diagnosis_code,
+    bed_specialty_code,
+    died,
+    race_color_code,
+    length_of_stay_days,
+    total_cost,
+    icu_cost
+from {{ ref('silver_hospitalizations') }}
