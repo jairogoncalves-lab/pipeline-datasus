@@ -38,8 +38,8 @@ Gold    →  dimensional modeling            s3://.../gold/
 ## Roadmap
 
 - [x] Repository setup
-- [ ] AWS setup (S3 + IAM)
-- [ ] Ingestion script (PySUS + boto3)
+- [x] AWS setup (S3 + IAM)
+- [x] Ingestion script (PySUS + boto3)
 - [ ] Orchestration DAG (Airflow / Astro CLI)
 - [ ] Databricks setup + dbt project
 - [ ] dbt models (Silver / Gold) + tests
