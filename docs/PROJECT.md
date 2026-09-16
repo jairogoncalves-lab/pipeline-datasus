@@ -25,6 +25,10 @@ Build a robust, modern, and automated data engineering pipeline to extract, clea
 - **Ingestion Validation (Bronze)**: Python function run by Airflow checking minimum volume (avoids empty tables) and presence of required source columns.
 - **Transformation Validation (Silver/Gold)**: Declarative dbt tests (`unique`, `not_null`) and domain rules via `dbt-expectations` (e.g., ensuring hospitalization costs are ≥ 0 and state codes are valid). A failure in any test halts the pipeline.
 
+### Known Data Gaps
+
+DataSUS's own FTP source has genuine publication gaps: not every state has all 12 months of a given year available at all times. For example, for competência year 2024, SP is missing months 02, 06, 08, and 12, while RJ is only missing month 07 — the gap is state-specific and not caused by the pipeline. The ingestion script's minimum-row-count validation correctly detects and halts on these empty competências instead of loading bad/empty data into the bronze layer.
+
 ## Governance, CI/CD, and Visualization
 
 - **Lineage and Data Dictionary**: Automatic generation of interactive documentation and the visual lineage graph (`dbt docs generate`), publishable on GitHub Pages.
