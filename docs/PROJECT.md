@@ -1,41 +1,41 @@
-# Contexto do Projeto: Pipeline End-to-End de Engenharia de Dados (DataSUS)
+# Project Context: End-to-End Data Engineering Pipeline (DataSUS)
 
-## Objetivo Geral
+## General Objective
 
-Construir um pipeline de engenharia de dados robusto, moderno e automatizado para extrair, tratar, transformar, testar e disponibilizar dados públicos de saúde do Brasil (DataSUS / SIH-SUS - Sistema de Informações Hospitalares) utilizando boas práticas de arquitetura em nuvem, governança e engenharia de software.
+Build a robust, modern, and automated data engineering pipeline to extract, clean, transform, test, and serve Brazil's public health data (DataSUS / SIH-SUS — Hospital Information System), using cloud architecture, governance, and software engineering best practices.
 
-## Stack Tecnológica
+## Tech Stack
 
-- **Armazenamento / Data Lake**: AWS S3 (Bucket particionado) e AWS IAM (Gestão de Acessos).
-- **Ingestão & Validação Inicial**: Python (PySUS, boto3, pandas).
-- **Processamento**: Databricks Community ou AWS Databricks (Engine Spark).
-- **Transformação & Modelagem**: dbt Core (dbt-databricks, dbt-expectations).
-- **Orquestração**: Apache Airflow rodando via Docker (Astro CLI) + Astronomer Cosmos (integração Airflow-dbt).
-- **Versionamento & DataOps**: Git, GitHub, GitHub Actions (CI/CD com sqlfluff e flake8).
-- **Infraestrutura como Código (IaC)**: Terraform (opcional/diferencial para provisionar S3 e IAM).
+- **Storage / Data Lake**: AWS S3 (partitioned bucket) and AWS IAM (access management).
+- **Ingestion & Initial Validation**: Python (PySUS, boto3, pandas).
+- **Processing**: Databricks Community or AWS Databricks (Spark engine).
+- **Transformation & Modeling**: dbt Core (dbt-databricks, dbt-expectations).
+- **Orchestration**: Apache Airflow running via Docker (Astro CLI) + Astronomer Cosmos (Airflow-dbt integration).
+- **Versioning & DataOps**: Git, GitHub, GitHub Actions (CI/CD with sqlfluff and flake8).
+- **Infrastructure as Code (IaC)**: Terraform (optional/differential, for provisioning S3 and IAM).
 
-## Arquitetura de Dados (Medallion Architecture)
+## Data Architecture (Medallion Architecture)
 
-- **Bronze** (`s3://.../bronze/`): Dados brutos extraídos do DataSUS via script Python, convertidos para formato Parquet de alta performance.
-- **Silver** (`s3://.../silver/`): Dados limpos, desduplicados, com schemas padronizados e colunas convertidas (realizado via dbt no Databricks).
-- **Gold** (`s3://.../gold/`): Modelagem dimensional (tabelas fato e dimensão, como `fato_internacoes`, `dim_municipio`, `dim_tempo`) e agregações prontas para análise de negócios.
+- **Bronze** (`s3://.../bronze/`): Raw data extracted from DataSUS via Python script, converted to high-performance Parquet format.
+- **Silver** (`s3://.../silver/`): Clean, deduplicated data with standardized schemas and converted columns (done via dbt on Databricks).
+- **Gold** (`s3://.../gold/`): Dimensional modeling (fact and dimension tables, such as `fact_hospitalizations`, `dim_municipality`, `dim_date`) and aggregations ready for business analysis.
 
-## Qualidade de Dados (Multi-camadas)
+## Data Quality (Multi-layer)
 
-- **Validação na Ingestão (Bronze)**: Função Python executada pelo Airflow checando volume mínimo (evita tabelas vazias) e presença de colunas obrigatórias da fonte.
-- **Validação na Transformação (Silver/Gold)**: Testes declarativos no dbt (`unique`, `not_null`) e regras de domínio via `dbt-expectations` (ex: garantir que custos de internação são ≥ 0 e UFs são válidas). A falha em qualquer teste interrompe o pipeline.
+- **Ingestion Validation (Bronze)**: Python function run by Airflow checking minimum volume (avoids empty tables) and presence of required source columns.
+- **Transformation Validation (Silver/Gold)**: Declarative dbt tests (`unique`, `not_null`) and domain rules via `dbt-expectations` (e.g., ensuring hospitalization costs are ≥ 0 and state codes are valid). A failure in any test halts the pipeline.
 
-## Governança, CI/CD e Visualização
+## Governance, CI/CD, and Visualization
 
-- **Linhagem e Dicionário de Dados**: Geração automática da documentação interativa e do grafo visual de linhagem (`dbt docs generate`), publicável no GitHub Pages.
-- **CI/CD no GitHub**: Workflow no GitHub Actions validando a formatação do SQL (`sqlfluff`) e a sintaxe do Python a cada Pull Request na branch principal.
+- **Lineage and Data Dictionary**: Automatic generation of interactive documentation and the visual lineage graph (`dbt docs generate`), publishable on GitHub Pages.
+- **CI/CD on GitHub**: GitHub Actions workflow validating SQL formatting (`sqlfluff`) and Python syntax on every Pull Request to the main branch.
 
-## Roteiro Sequencial de Execução
+## Sequential Execution Roadmap
 
-1. **Setup AWS & Git**: Criar repositório Git, bucket S3 com as pastas `bronze/`, `silver/`, `gold/` e usuário IAM.
-2. **Ingestão Python**: Desenvolver o script de extração usando PySUS e envio para o S3 com boto3.
-3. **Orquestração Airflow**: Configurar projeto Airflow com Astro CLI e criar a DAG controlando a extração e a validação inicial.
-4. **Setup Databricks & dbt**: Configurar cluster no Databricks, montar os caminhos do S3 e inicializar o projeto dbt local conectado ao Databricks.
-5. **Modelagem dbt**: Escrever os modelos SQL para as camadas Silver e Gold, adicionando a camada de testes em arquivos `.yml`.
-6. **Integração Airflow + dbt**: Usar o `astronomer-cosmos` na DAG para executar o dbt diretamente pelo Airflow.
-7. **CI/CD e Docs**: Adicionar as Actions do GitHub e gerar a documentação estática do dbt.
+1. **AWS & Git Setup**: Create the Git repository, an S3 bucket with `bronze/`, `silver/`, `gold/` folders, and an IAM user.
+2. **Python Ingestion**: Develop the extraction script using PySUS and upload to S3 with boto3.
+3. **Airflow Orchestration**: Set up the Airflow project with Astro CLI and create the DAG controlling extraction and initial validation.
+4. **Databricks & dbt Setup**: Configure the Databricks cluster, mount the S3 paths, and initialize the local dbt project connected to Databricks.
+5. **dbt Modeling**: Write the SQL models for the Silver and Gold layers, adding the test layer in `.yml` files.
+6. **Airflow + dbt Integration**: Use `astronomer-cosmos` in the DAG to run dbt directly from Airflow.
+7. **CI/CD and Docs**: Add GitHub Actions and generate the static dbt documentation.
