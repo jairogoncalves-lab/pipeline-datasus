@@ -2,6 +2,8 @@ select
     admission_id,
     cast(strftime(admission_date, '%Y%m%d') as integer) as admission_date_key,
     cast(strftime(discharge_date, '%Y%m%d') as integer) as discharge_date_key,
+    year as competency_year,
+    month as competency_month,
     patient_municipality_code,
     hospital_municipality_code,
     hospital_cnes_code,

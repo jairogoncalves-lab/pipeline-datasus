@@ -21,6 +21,16 @@ models:
                 field: date_key
       - name: discharge_date_key
         description: Foreign key to `dim_date.date_key`, representing the discharge date.
+      - name: competency_year
+        description: >
+          Year of the SIH-SUS competência (reporting period) — the year of the source file this
+          record was published under, NOT a clinical date. Distinct from admission/discharge dates:
+          a long admission can be reported under a later competência than when it started. This is
+          the correct field for detecting source-file gaps (see "Known Data Gaps" in docs/PROJECT.md) —
+          `admission_date`/`discharge_date` alone can mask a missing competência file, since some of
+          its admissions may already appear under a later month's file.
+      - name: competency_month
+        description: Month of the SIH-SUS competência (reporting period). See `competency_year`.
       - name: patient_municipality_code
         description: Foreign key to `dim_municipality.municipality_code`, the patient's residence municipality.
       - name: hospital_municipality_code

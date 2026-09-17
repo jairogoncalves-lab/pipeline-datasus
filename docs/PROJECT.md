@@ -29,6 +29,8 @@ Build a robust, modern, and automated data engineering pipeline to extract, clea
 
 DataSUS's own FTP source has genuine publication gaps: not every state has all 12 months of a given year available at all times. For example, for competência year 2024, SP is missing months 02, 06, 08, and 12, while RJ is only missing month 07 — the gap is state-specific and not caused by the pipeline. The ingestion script's minimum-row-count validation correctly detects and halts on these empty competências instead of loading bad/empty data into the bronze layer.
 
+**Competência vs. clinical dates.** A hospitalization's `competência` (the year/month of the source file it was published under) is not the same thing as its `admission_date`/`discharge_date`. A long admission can start in one month but only be reported under a later competência's file — so a missing competência file does not necessarily mean zero admissions with clinical dates in that month; some may already appear, filed under a later month. For SP/2024, grouping by clinical `admission_date` shows only December fully at zero, while February, June, and August still show partial data leaking in from later files. The only reliable way to see the true source-file gap is to group by `competency_year`/`competency_month` (carried through to `fact_hospitalizations` for exactly this reason) — that query cleanly shows the 8 present months with no trace of the 4 missing ones.
+
 ## Governance, CI/CD, and Visualization
 
 - **Lineage and Data Dictionary**: Automatic generation of interactive documentation and the visual lineage graph (`dbt docs generate`), publishable on GitHub Pages.
